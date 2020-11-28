@@ -70,6 +70,7 @@ jobs:
             echo 'export SUFFIX=$(echo $CIRCLE_BRANCH | tr "[:upper:]" "[:lower:]" | tr -cd "[a-z0-9-]")' >> $BASH_ENV
             echo 'export APP_NAME="$GIGALIXIR_APP_NAME-$SUFFIX"' >> $BASH_ENV
             source $BASH_ENV
+      - run: git remote add gigalixir https://$GIGALIXIR_EMAIL:$GIGALIXIR_API_KEY@git.gigalixir.com/$GIGALIXIR_APP_NAME.git
       - run: git push -f gigalixir HEAD:refs/heads/main
 
 workflows:

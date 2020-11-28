@@ -28,6 +28,8 @@ defmodule MyAppWeb.MyButtonLive do
         Rounded
       </label>
     </form>
+
+    <a href="https://qiita.com/torifukukaiou/items/b5ae9eac42bd304b7aa3">Surfaceをつかってみる(Elixir/Phoenix)</a>
     """
   end
 

@@ -72,7 +72,7 @@ jobs:
       - run: gigalixir login -e "$GIGALIXIR_EMAIL" -p "$GIGALIXIR_PASSWORD" -y
       - run: gigalixir git:remote $GIGALIXIR_APP_NAME
       - run: git push -f gigalixir HEAD:refs/heads/main
-      - run: mkdir ~/.ssh
+
       - run: printf "Host *\n StrictHostKeyChecking no" > ~/.ssh/config
       - run: echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
       - run: gigalixir ps:migrate -a $GIGALIXIR_APP_NAME

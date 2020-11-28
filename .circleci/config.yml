@@ -59,6 +59,9 @@ jobs:
     docker:
       - image: circleci/elixir:1.10.4
     steps:
+      - add_ssh_keys:
+          fingerprints:
+            - $GIGALIXIR_FINGERPRINT
       - checkout
       - run: sudo apt-get update
       - run: sudo apt-get install -y python-pip
@@ -73,8 +76,6 @@ jobs:
       - run: gigalixir git:remote $GIGALIXIR_APP_NAME
       - run: git push -f gigalixir HEAD:refs/heads/main
 
-      - run: printf "Host *\n StrictHostKeyChecking no" > ~/.ssh/config
-      - run: echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
       - run: gigalixir ps:migrate -a $GIGALIXIR_APP_NAME
 
 workflows:

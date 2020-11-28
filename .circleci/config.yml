@@ -1,0 +1,85 @@
+version: 2
+jobs:
+  build:
+    parallelism: 1
+    docker:
+      - image: circleci/elixir:1.10.4
+        environment:
+          MIX_ENV: test
+      - image: circleci/postgres:10.1-alpine
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: my_app_test
+          POSTGRES_PASSWORD: postgres
+
+    working_directory: ~/app
+
+    steps:
+      - checkout
+
+      - run: mix local.hex --force
+      - run: mix local.rebar --force
+
+      - restore_cache:
+          keys:
+            - v1-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+            - v1-mix-cache-{{ .Branch }}
+            - v1-mix-cache
+      - restore_cache:
+          keys:
+            - v1-build-cache-{{ .Branch }}
+            - v1-build-cache
+      - run: mix do deps.get, compile
+      - save_cache:
+          key: v1-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+          paths: "deps"
+      - save_cache:
+          key: v1-mix-cache-{{ .Branch }}
+          paths: "deps"
+      - save_cache:
+          key: v1-mix-cache
+          paths: "deps"
+      - save_cache:
+          key: v1-build-cache-{{ .Branch }}
+          paths: "_build"
+      - save_cache:
+          key: v1-build-cache
+          paths: "_build"
+
+      - run:
+          name: Wait for DB
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+
+      - run: mix test
+
+      - store_test_results:
+          path: _build/test/lib/my_app
+
+  deploy:
+    docker:
+      - image: circleci/elixir:1.10.4
+    steps:
+      - checkout
+      - run: sudo apt-get update
+      - run: sudo apt-get install -y python-pip
+      - run: sudo pip install gigalixir --ignore-installed six
+      - run: gigalixir login -e "$GIGALIXIR_EMAIL" -y -p "$GIGALIXIR_PASSWORD"
+      - run:
+          name: my_app
+          command: |
+            echo 'export SUFFIX=$(echo $CIRCLE_BRANCH | tr "[:upper:]" "[:lower:]" | tr -cd "[a-z0-9-]")' >> $BASH_ENV
+            echo 'export APP_NAME="$GIGALIXIR_APP_NAME-$SUFFIX"' >> $BASH_ENV
+            source $BASH_ENV
+      - run: git push -f gigalixir HEAD:refs/heads/main
+
+workflows:
+  version: 2
+  deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: main

@@ -63,7 +63,6 @@ jobs:
       - run: sudo apt-get update
       - run: sudo apt-get install -y python-pip
       - run: sudo pip install gigalixir --ignore-installed six
-      - run: gigalixir login -e "$GIGALIXIR_EMAIL" -y -p "$GIGALIXIR_PASSWORD"
       - run:
           name: my_app
           command: |

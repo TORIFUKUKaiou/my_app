@@ -76,6 +76,8 @@ jobs:
       - run: gigalixir git:remote $GIGALIXIR_APP_NAME
       - run: git push -f gigalixir HEAD:refs/heads/main
 
+      - run: gigalixir ps:migrate
+
 workflows:
   version: 2
   deploy:

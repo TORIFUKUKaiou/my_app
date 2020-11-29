@@ -76,6 +76,7 @@ jobs:
       - run: gigalixir git:remote $GIGALIXIR_APP_NAME
       - run: git push -f gigalixir HEAD:refs/heads/main
 
+      - run: printf "Host *\n StrictHostKeyChecking no" > ~/.ssh/config
       - run: gigalixir ps:migrate
 
 workflows:

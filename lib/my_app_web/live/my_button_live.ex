@@ -33,9 +33,13 @@ defmodule MyAppWeb.MyButtonLive do
     """
   end
 
-  def handle_event("check_changed", %{"_target" => ["checkboxes"], "checkboxes" => checkboxes}, socket) do
-    loading = Enum.any?(checkboxes, & &1 == "loading")
-    rounded = Enum.any?(checkboxes, & &1 == "rounded")
+  def handle_event(
+        "check_changed",
+        %{"_target" => ["checkboxes"], "checkboxes" => checkboxes},
+        socket
+      ) do
+    loading = Enum.any?(checkboxes, &(&1 == "loading"))
+    rounded = Enum.any?(checkboxes, &(&1 == "rounded"))
     {:noreply, assign(socket, loading: loading, rounded: rounded)}
   end
 end

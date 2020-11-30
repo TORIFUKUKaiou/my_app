@@ -59,9 +59,7 @@ jobs:
     docker:
       - image: circleci/elixir:1.10.4
     steps:
-      - add_ssh_keys:
-          fingerprints:
-            - $GIGALIXIR_FINGERPRINT
+      - add_ssh_keys
       - checkout
       - run: sudo apt-get update
       - run: sudo apt-get install -y python-pip
